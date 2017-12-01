@@ -16,17 +16,16 @@ module.exports = (env, argv) => {
     const CSSExtract = new ExtractTextPlugin('styles.css');
 
     return {
-        entry: ['babel-polyfill', './src/index.js'],
+        entry: './src/index.tsx',
         output: {
             path: path.join(publicPath, 'dist'),
             filename: 'bundle.js'
         },
+        resolve: {
+            extensions: ['.ts', '.tsx', '.js', '.jsx']
+        },
         module: {
-            rules: [{ // run babel when a js file is encountered outside of node_modules/
-                loader: 'babel-loader',
-                test: /\.js$/,
-                exclude: /node_modules/
-            }, {
+            rules: [{
                 use: CSSExtract.extract({
                     use: [{
                         loader: 'css-loader',
@@ -42,6 +41,10 @@ module.exports = (env, argv) => {
                     ]
                 }),
                 test: /\.s?css$/
+            }, {
+                test: /\.(t|j)sx?$/,
+                use: { loader: 'awesome-typescript-loader' },
+                exclude: /node_modules/
             }]
         },
         plugins: [
